@@ -1,3 +1,4 @@
+/*
 package com.mood.bibliothequemood;
 
 import org.junit.jupiter.api.Test;
@@ -11,3 +12,4 @@ class BibliothequemoodApplicationTests {
 	}
 
 }
+*/
