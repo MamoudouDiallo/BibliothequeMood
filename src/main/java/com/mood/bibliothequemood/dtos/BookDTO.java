@@ -1,11 +1,8 @@
 package com.mood.bibliothequemood.dtos;
 
-import com.mood.bibliothequemood.entites.AuthorEntity;
-import com.mood.bibliothequemood.entites.LibraryEntity;
-import com.mood.bibliothequemood.entites.enums.Language;
-import org.apache.tomcat.jni.Library;
 
-import java.time.LocalDate;
+import com.mood.bibliothequemood.entites.enums.Language;
+
 
 public class BookDTO {
     private Long id;
@@ -22,9 +19,8 @@ public class BookDTO {
     public BookDTO(Long id,
                    String title,
                    String description,
-                   Integer pageNumber, Language language,
-                   AuthorEntity author,
-                   LibraryEntity library,
+                   Integer pageNumber,
+                   Language language,
                    String image) {
         this.id = id;
         this.title = title;
@@ -81,6 +77,4 @@ public class BookDTO {
     public void setLanguage(Language language) {
         this.language = language;
     }
-
-
 }

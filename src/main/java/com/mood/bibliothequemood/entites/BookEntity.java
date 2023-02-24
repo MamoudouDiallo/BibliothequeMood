@@ -17,7 +17,6 @@ public class BookEntity {
     private String title;
     private String description;
     private LocalDate publicationDate;
-
     private String image;
     private String editor;
     private String gender;
@@ -136,5 +135,13 @@ public class BookEntity {
 
     public void setLibrary(LibraryEntity library) {
         this.library = library;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
