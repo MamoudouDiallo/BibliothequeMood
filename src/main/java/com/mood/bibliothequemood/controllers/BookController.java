@@ -29,10 +29,6 @@ public class BookController {
         return bookService.getBooks();
     }
 
-    @GetMapping("/books/author/{id}")
-    public List<BookEntity> getAuthorBook( @PathVariable Long id) {
-        return bookService.getBooksByAuthor(id);
-    }
 
     @GetMapping("/books/{id}")
     public BookEntity getBook(@PathVariable Long id) {

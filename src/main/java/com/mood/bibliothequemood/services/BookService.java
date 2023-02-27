@@ -10,7 +10,6 @@ public interface BookService {
     BookDTO createBook(BookDTO authorDTO);
     BookDTO updateBook(BookDTO authorDTO, Long id);
     List<BookEntity> getBooks();
-    List<BookEntity> getBooksByAuthor(Long id);
     BookEntity getBook(Long id);
     void deleteBook(Long id);
 

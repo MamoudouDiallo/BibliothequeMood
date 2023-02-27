@@ -2,7 +2,6 @@ package com.mood.bibliothequemood.entites;
 
 import com.mood.bibliothequemood.entites.enums.Language;
 import lombok.*;
-import org.apache.tomcat.jni.Library;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -21,14 +20,10 @@ public class BookEntity {
     private String editor;
     private String gender;
     private Integer pageNumber;
+    private String author;
+    private String library;
     @Enumerated(EnumType.STRING)
     private Language language;
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private AuthorEntity author;
-    @ManyToOne(targetEntity = LibraryEntity.class)
-    @JoinColumn(name = "library_id")
-    private LibraryEntity library;
 
     public BookEntity() {
     }
@@ -41,8 +36,8 @@ public class BookEntity {
                       String gender,
                       Integer pageNumber,
                       Language language,
-                      AuthorEntity author,
-                      LibraryEntity library,
+                      String author,
+                      String library,
                       String image) {
         this.id = id;
         this.title = title;
@@ -121,19 +116,19 @@ public class BookEntity {
         this.language = language;
     }
 
-    public AuthorEntity getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(AuthorEntity author) {
+    public void setAuthor(String author) {
         this.author = author;
     }
 
-    public LibraryEntity getLibrary() {
+    public String getLibrary() {
         return library;
     }
 
-    public void setLibrary(LibraryEntity library) {
+    public void setLibrary(String library) {
         this.library = library;
     }
 

@@ -9,6 +9,8 @@ public class BookDTO {
     private String title;
     private  String image;
     private String description;
+    private String author;
+    private String library;
     private Integer pageNumber;
     private Language language;
 
@@ -21,10 +23,14 @@ public class BookDTO {
                    String description,
                    Integer pageNumber,
                    Language language,
+                   String author,
+                   String library,
                    String image) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.author = author;
+        this.library = library;
         this.pageNumber = pageNumber;
         this.language = language;
         this.image = image;
@@ -60,6 +66,22 @@ public class BookDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getLibrary() {
+        return library;
+    }
+
+    public void setLibrary(String library) {
+        this.library = library;
     }
 
     public Integer getPageNumber() {

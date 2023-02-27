@@ -42,11 +42,6 @@ public class BookImpl implements BookService{
     }
 
     @Override
-    public List<BookEntity> getBooksByAuthor(Long id) {
-        return bookRepository.findByAuthorId(id);
-    }
-
-    @Override
     public BookEntity getBook(Long id) {
         Optional<BookEntity> book = bookRepository.findById(id);
 
