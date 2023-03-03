@@ -2,6 +2,7 @@ package com.mood.bibliothequemood.services;
 
 import com.mood.bibliothequemood.dtos.BookDTO;
 import com.mood.bibliothequemood.entites.BookEntity;
+import com.mood.bibliothequemood.exception.BookNotFoundException;
 import com.mood.bibliothequemood.mappers.BookMapper;
 import com.mood.bibliothequemood.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +43,14 @@ public class BookImpl implements BookService{
     }
 
     @Override
-    public BookEntity getBook(Long id) {
+    public BookEntity getBook(Long id) throws BookNotFoundException {
         Optional<BookEntity> book = bookRepository.findById(id);
 
         if (book.isPresent()) {
             return book.get();
+        } else {
+            throw new BookNotFoundException("Book not found with id: " + id);
         }
-        return new BookEntity();
     }
 
     @Override
