@@ -65,6 +65,17 @@
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>1.6.4</version>
 		</dependency>
+		<!--VALIDATION -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.thauvin.erik.httpstatus</groupId>
+			<artifactId>httpstatus</artifactId>
+			<version>1.0.5</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
