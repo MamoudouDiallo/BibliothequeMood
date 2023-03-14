@@ -9,9 +9,9 @@ import java.util.List;
 public interface BookService {
 
     BookDTO createBook(BookDTO authorDTO);
-    BookDTO updateBook(BookDTO authorDTO, Long id);
-    List<BookEntity> getBooks();
-    BookEntity getBook(Long id) throws BookNotFoundException;
-    void deleteBook(Long id);
+    BookDTO updateBook(BookDTO authorDTO, Long id) throws BookNotFoundException;
+    List<BookDTO> getBooks();
+    BookDTO getBook(Long id) throws BookNotFoundException;
+    void deleteBook(Long id) throws BookNotFoundException;
 
 }
