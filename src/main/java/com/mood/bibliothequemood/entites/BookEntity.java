@@ -28,17 +28,18 @@ public class BookEntity {
     public BookEntity() {
     }
 
-    public BookEntity(Long id,
-                      String title,
-                      String description,
-                      LocalDate publicationDate,
-                      String editor,
-                      String gender,
-                      Integer pageNumber,
-                      Language language,
-                      String author,
-                      String library,
-                      String image) {
+    public BookEntity(
+            Long id,
+            String title,
+            String description,
+            LocalDate publicationDate,
+            String editor,
+            String gender,
+            Integer pageNumber,
+            Language language,
+            String author,
+            String library,
+            String image) {
         this.id = id;
         this.title = title;
         this.description = description;

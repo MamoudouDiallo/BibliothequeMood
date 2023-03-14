@@ -9,12 +9,13 @@ import javax.validation.constraints.*;
 
 public class BookDTO {
 
+    private Long id;
     @NotBlank(message = "Book title is required")
     @NotEmpty(message = "Book title must not be empty")
     private String title;
     @NotNull(message = "Book image is required ")
     @NotEmpty(message = "Book image must not be empty")
-    private  String image;
+    private String image;
     @NotNull(message = "Book description is required")
     @NotEmpty(message = "Book description must not be empty")
     private String description;
@@ -33,13 +34,16 @@ public class BookDTO {
     public BookDTO() {
     }
 
-    public BookDTO( String title,
-                   String description,
-                   Integer pageNumber,
-                   Language language,
-                   String author,
-                   String library,
-                   String image) {
+    public BookDTO(
+            Long id,
+            String title,
+            String description,
+            Integer pageNumber,
+            Language language,
+            String author,
+            String library,
+            String image) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.author = author;
@@ -47,6 +51,14 @@ public class BookDTO {
         this.pageNumber = pageNumber;
         this.language = language;
         this.image = image;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {
