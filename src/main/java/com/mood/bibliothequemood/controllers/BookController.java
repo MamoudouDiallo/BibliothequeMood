@@ -13,7 +13,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping(value = "/api/books")
+@RequestMapping(value = "/api/v1/rest/books")
 public class BookController {
     @Autowired
     private BookService bookService;
@@ -36,13 +36,37 @@ public class BookController {
 
     @GetMapping("/{id}")
     public ResponseEntity<BookDTO> getBook(@PathVariable Long id) throws BookNotFoundException {
-        return ResponseEntity.ok(bookService.getBook(id));
+        try {
+            return ResponseEntity.ok(bookService.getBook(id));
+        } catch (BookNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
+
+//    @DeleteMapping("/{id}")
+//    public void deleteBook(@PathVariable Long id) throws BookNotFoundException {
+//        bookService.deleteBook(id);
+//    }
 
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable Long id) throws BookNotFoundException {
-        bookService.deleteBook(id);
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        try {
+            bookService.deleteBook(id);
+            return ResponseEntity.noContent().build();
+        } catch (BookNotFoundException e) {
+            // Handle BookNotFoundException by returning a 404 Not Found response
+            return ResponseEntity.notFound().build();
+        }
     }
 
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAll() {
+        try {
+            bookService.deleteAll();
+            return ResponseEntity.ok("success delete all");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(("error deleting"));
+        }
+    }
 
 }

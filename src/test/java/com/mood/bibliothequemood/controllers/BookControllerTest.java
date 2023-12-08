@@ -1,96 +1,167 @@
 package com.mood.bibliothequemood.controllers;
 
-import com.mood.bibliothequemood.dtos.BookDTO;
-import com.mood.bibliothequemood.exception.BookNotFoundException;
-import com.mood.bibliothequemood.services.BookService;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.json.JSONObject;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+/**
+ * @author amadou98 <amadoubhoyediallo98@gmail.com>
+ */
+
+@SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@AutoConfigureMockMvc
+@Tag("BookControllerTest")
+@DisplayName("Unit testing book controller endpoint")
 class BookControllerTest {
-    @Mock
-    private BookService bookService;
 
-    @InjectMocks
+    @Autowired
     private BookController bookController;
 
-    @Test
-    void testCreateBook() {
-        // Arrange
-        BookDTO bookDTO = new BookDTO();
-        BookDTO createdBookDTO = new BookDTO();
-        when(bookService.createBook(eq(bookDTO))).thenReturn(createdBookDTO);
+    @Autowired
+    private MockMvc mockMvc;
 
-        // when
-        ResponseEntity<BookDTO> responseEntity = bookController.createBook(bookDTO);
+    private JSONObject json;
 
-        // then
-        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-        assertEquals(createdBookDTO, responseEntity.getBody());
+    @BeforeAll
+    @AfterAll
+    public void clearDatabase() {
+        this.bookController.deleteAll();
+        json = null;
     }
 
     @Test
-    void testUpdateBook() throws BookNotFoundException {
-        // Arrange
-        Long id = 1L;
-        BookDTO bookDTO = new BookDTO();
-        BookDTO updatedBookDTO = new BookDTO();
-        when(bookService.updateBook(eq(bookDTO), eq(id))).thenReturn(updatedBookDTO);
+    @Order(value = 1)
+    @DisplayName("Create book")
+    public void testThatWeCanCreateBook() throws Exception {
+        String requestPayload = "{"
+                + "\"title\": \"Kirikou et la sorcière 1\","
+                + "\"image\": \"https://www1.hds-streaming.to/poster/kirikou-et-la-sorciegrave.jpg\","
+                + "\"description\": \"Le minuscule Kirikou nait dans un village d'Afrique sur lequel une sorciere\","
+                + "\"author\": \"Theo Sebeko\","
+                + "\"library\": \"Afrique\","
+                + "\"pageNumber\": \"50\","
+                + "\"language\": \"FRENCH\""
+                + "}";
+        MvcResult mockMvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/rest/books")
+                        .content(requestPayload)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.title").value("Kirikou et la sorcière 1"))
+                .andExpect(jsonPath("$.image").value("https://www1.hds-streaming.to/poster/kirikou-et-la-sorciegrave.jpg"))
+                .andExpect(jsonPath("$.description").value("Le minuscule Kirikou nait dans un village d'Afrique sur lequel une sorciere"))
+                .andExpect(jsonPath("$.author").value("Theo Sebeko"))
+                .andExpect(jsonPath("$.library").value("Afrique"))
+                .andExpect(jsonPath("$.pageNumber").value("50"))
+                .andExpect(jsonPath("$.language").value("FRENCH"))
+                .andReturn();
 
-        // when
-        BookDTO result = bookController.updateBook(bookDTO, id);
+        json = new JSONObject(mockMvcResult.getResponse().getContentAsString());
 
-        // then
-        assertEquals(updatedBookDTO, result);
     }
 
     @Test
-    void getBook_returnsBookDto_whenBookExists() throws BookNotFoundException {
-        // Arrange
-        Long bookId = 1L;
-        BookDTO expectedBookDto = new BookDTO();
-
-        when(bookService.getBook(bookId)).thenReturn(expectedBookDto);
-
-        // when
-        ResponseEntity<BookDTO> response = bookController.getBook(bookId);
-
-        // then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedBookDto, response.getBody());
+    @Order(value = 2)
+    @DisplayName("Get or Read a book with ID")
+    public void testGetBook() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/rest/books/" + json.getInt("id"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Kirikou et la sorcière 1"))
+                .andExpect(jsonPath("$.image").value("https://www1.hds-streaming.to/poster/kirikou-et-la-sorciegrave.jpg"))
+                .andExpect(jsonPath("$.description").value("Le minuscule Kirikou nait dans un village d'Afrique sur lequel une sorciere"))
+                .andExpect(jsonPath("$.author").value("Theo Sebeko"))
+                .andExpect(jsonPath("$.library").value("Afrique"))
+                .andExpect(jsonPath("$.pageNumber").value("50"))
+                .andExpect(jsonPath("$.language").value("FRENCH"));
     }
 
     @Test
-    void getBook_throwsBookNotFoundException_whenBookDoesNotExist() throws BookNotFoundException {
-        // Arrange
-        Long bookId = 1L;
-
-        when(bookService.getBook(bookId)).thenThrow(new BookNotFoundException("Book not found with id: " + bookId));
-
-        // when and then
-        assertThrows(BookNotFoundException.class, () -> bookController.getBook(bookId));
+    @Order(value = 3)
+    @DisplayName("Show books list")
+    public void testGetBooks() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/rest/books"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("Kirikou et la sorcière 1"))
+                .andExpect(jsonPath("$[0].image").value("https://www1.hds-streaming.to/poster/kirikou-et-la-sorciegrave.jpg"))
+                .andExpect(jsonPath("$[0].description").value("Le minuscule Kirikou nait dans un village d'Afrique sur lequel une sorciere"))
+                .andExpect(jsonPath("$[0].author").value("Theo Sebeko"))
+                .andExpect(jsonPath("$[0].library").value("Afrique"))
+                .andExpect(jsonPath("$[0].pageNumber").value("50"))
+                .andExpect(jsonPath("$[0].language").value("FRENCH"));
     }
-
 
     @Test
-    void testDeleteBook() throws BookNotFoundException {
-        // Arrange
-        Long id = 1L;
+    @Order(value = 4)
+    @DisplayName("Update a book with ID")
+    public void testUpdateBook() throws Exception {
+        String requestPayload = "{"
+                + "\"id\":" + json.getInt("id") + ","
+                + "\"title\": \"Avatar La Voie de l'eau\","
+                + "\"image\": \"https://image.tmdb.org/t/p/w300/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg\","
+                + "\"description\": \"Une dizaine d'années se sont écoulés depuis les précédents\","
+                + "\"author\": \"James Cameron\","
+                + "\"library\": \"Pandora\","
+                + "\"pageNumber\": \"50\","
+                + "\"language\": \"ENGLISH\""
+                + "}";
 
-        // when
-        bookController.deleteBook(id);
-
-        // then
-        verify(bookService, times(1)).deleteBook(eq(id));
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/rest/books/" + json.getInt("id"))
+                        .content(requestPayload)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(json.getInt("id")))
+                .andExpect(jsonPath("$.title").value("Avatar La Voie de l'eau"))
+                .andExpect(jsonPath("$.image").value("https://image.tmdb.org/t/p/w300/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg"))
+                .andExpect(jsonPath("$.description").value("Une dizaine d'années se sont écoulés depuis les précédents"))
+                .andExpect(jsonPath("$.author").value("James Cameron"))
+                .andExpect(jsonPath("$.library").value("Pandora"))
+                .andExpect(jsonPath("$.pageNumber").value("50"))
+                .andExpect(jsonPath("$.language").value("ENGLISH"));
     }
+
+    @Test
+    @Order(value = 5)
+    @DisplayName("Delete a student with ID")
+    public void testDeleteBook() throws Exception {
+        // Envoyer une requête DELETE pour supprimer le livre
+           this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/rest/books/" + json.getInt("id"))
+                           .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        // Vérifier que le livre a été supprimé
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/rest/books/" + json.getInt("id"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(value = 6)
+    @DisplayName("Wrong book ID")
+    public void testThatWeCanNotFoundBook   () throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/rest/books/" + json.getInt("id")))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+                //.andExpect(jsonPath("$.status").value(404))
+                //.andExpect(jsonPath("$.errorMessage").value("Book not found with id: " + json.getInt("id")));
+    }
+
 }

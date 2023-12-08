@@ -11,6 +11,8 @@ public interface BookService {
     BookDTO createBook(BookDTO authorDTO);
     BookDTO updateBook(BookDTO authorDTO, Long id) throws BookNotFoundException;
     List<BookDTO> getBooks();
+
+    void deleteAll();
     BookDTO getBook(Long id) throws BookNotFoundException;
     void deleteBook(Long id) throws BookNotFoundException;
 
