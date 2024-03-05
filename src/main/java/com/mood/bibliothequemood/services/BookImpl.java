@@ -30,21 +30,40 @@ public class BookImpl implements BookService {
 
     @Override
     public BookDTO updateBook(BookDTO bookDTO, Long id) throws BookNotFoundException {
-        Optional<BookEntity> bookExists = bookRepository.findById(id);
+        Optional<BookEntity> bookOptional = bookRepository.findById(id);
 
-        if (bookExists.isPresent()) {
-            BookEntity updatedBookEntity = bookExists.get();
-            bookMapper.toEntity(bookDTO);
-            bookRepository.save(updatedBookEntity);
-            return bookMapper.toDto(updatedBookEntity);
+        if (bookOptional.isPresent()) {
+            BookEntity existingBookEntity = bookOptional.get();
+
+            // Appliquer les modifications du DTO à l'entité existante
+            existingBookEntity.setTitle(bookDTO.getTitle());
+            existingBookEntity.setImage(bookDTO.getImage());
+            existingBookEntity.setDescription(bookDTO.getDescription());
+            existingBookEntity.setAuthor(bookDTO.getAuthor());
+            existingBookEntity.setLibrary(bookDTO.getLibrary());
+            existingBookEntity.setPageNumber(bookDTO.getPageNumber());
+            existingBookEntity.setLanguage(bookDTO.getLanguage());
+
+            // Sauvegarder l'entité mise à jour dans la base de données
+            bookRepository.save(existingBookEntity);
+
+            // Retourner le DTO correspondant à l'entité mise à jour
+            return bookMapper.toDto(existingBookEntity);
         }
+
         throw new BookNotFoundException("Book not found with id: " + id);
     }
+
 
     @Override
     public List<BookDTO> getBooks() {
         List<BookEntity> bookEntities = bookRepository.findAll();
         return bookMapper.toDtoList(bookEntities);
+    }
+
+    @Override
+    public void deleteAll() {
+        bookRepository.deleteAll();
     }
 
     @Override
@@ -61,13 +80,14 @@ public class BookImpl implements BookService {
 
     @Override
     public void deleteBook(Long id) throws BookNotFoundException {
-        Optional<BookEntity> bookExists = bookRepository.findById(id);
+        Optional<BookEntity> optionalBook = bookRepository.findById(id);
 
-        if (bookExists.isPresent()) {
+        if (optionalBook.isPresent()) {
             bookRepository.deleteById(id);
         } else {
             throw new BookNotFoundException("Book not found with id: " + id);
         }
     }
+
 
 }
